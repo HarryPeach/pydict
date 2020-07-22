@@ -1,6 +1,8 @@
+import json
+
 class Word:
-    def __init__(self, word, definition, etymology, synonyms):
-        self.word = word
-        self.definition = definition
-        self.etymology = etymology
-        self.synonyms = synonyms
+    def __init__(self, json_input):
+        json_parsed = json.loads(json_input)
+        # self.definiton = json_parsed["definitions"]
+        self.word = ""
+        self.definition = ""
