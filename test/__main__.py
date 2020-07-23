@@ -1,9 +1,12 @@
 import unittest
 import importlib.resources
+import os
+import argparse
 from unittest.mock import patch
 from expects import be_a, be_above, equal, expect, be, have_properties
 
 import pydict
+import pydict.core
 from pydict.word import Word
 from pydict.network_manager import NetworkManager
 import test.resources as x
@@ -47,31 +50,61 @@ class TestNetworkManager(unittest.TestCase):
         for word in words:
             expect(word).to(have_properties("word", "definition", "short_definition"))
 
-    @patch("pydict.requests.get")
+    @patch("pydict.network_manager.requests.get")
     def test_invalid_request_404(self, get_mock):
         """Tests that the program handles when an entry was not found"""
         get_mock.return_value.status_code = 404
         self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
 
-    @patch("pydict.requests.get")
+    @patch("pydict.network_manager.requests.get")
     def test_invalid_request_414(self, get_mock):
         """Tests that the program handles when a request url is too long"""
         get_mock.return_value.status_code = 414
         self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
 
-    @patch("pydict.requests.get")
+    @patch("pydict.network_manager.requests.get")
     def test_invalid_request_500(self, get_mock):
         """Tests that the program handles when a generic internal error occurs"""
         get_mock.return_value.status_code = 500
         self.assertRaises(Exception, NetworkManager.make_request, self, "", "", "")
 
-    @patch("pydict.requests.get")
+    @patch("pydict.network_manager.requests.get")
     def test_valid_request(self, get_mock):
         """Tests that the program handles a successful request correctly"""
         get_mock.return_value.status_code = 200
         get_mock.return_value.text = "example_request"
         
         expect(NetworkManager.make_request(self, "", "", "")).to(be("example_request"))
+
+class TestMain(unittest.TestCase):
+    """Tests the main class"""
+    @patch.dict(os.environ, {pydict.core.API_KEY_STRING: "example_set_string"})
+    def test_api_string_provided_through_env(self):
+        """Tests that the method will succeed if the key is provided through environment variables"""
+        expect(pydict.core.is_api_key_provided([])).to(be(True))
+
+    def test_api_string_none_provided(self):
+        """Tests that the method will fail when the api is not provided in any valid form"""
+
+        # Set up parser and arguments
+        parser = argparse.ArgumentParser(description="test parser")
+        parser.add_argument("--api-key")
+        args = parser.parse_args()
+
+        # Scrub the environment variable
+        os.environ[pydict.core.API_KEY_STRING] = ""
+        del os.environ[pydict.core.API_KEY_STRING]
+
+        expect(pydict.core.is_api_key_provided(args)).to(be(False))
+
+    def test_api_string_provided_through_args(self):
+        """Tests that the method will succeed if the key is passed through arguments"""
+        # Set up parser and arguments
+        parser = argparse.ArgumentParser(description="test parser")
+        parser.add_argument("--api-key")
+        args = parser.parse_args(["--api-key", "example_set_string"])
+
+        expect(pydict.core.is_api_key_provided(args)).to(be(True))
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

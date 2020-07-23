@@ -28,7 +28,7 @@ class NetworkManager:
         elif res.status_code == 500:
             raise Exception("The API server returned an internal error.")
         else:
-            raise Exception("An unspecified exception occurred.")
+            raise Exception("An exception occurred: " + res.text)
 
 
     def words_from_json(self, json_input):
