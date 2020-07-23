@@ -54,19 +54,19 @@ class TestNetworkManager(unittest.TestCase):
     def test_invalid_request_404(self, get_mock):
         """Tests that the program handles when an entry was not found"""
         get_mock.return_value.status_code = 404
-        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
+        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "", "")
 
     @patch("pydict.network_manager.requests.get")
     def test_invalid_request_414(self, get_mock):
         """Tests that the program handles when a request url is too long"""
         get_mock.return_value.status_code = 414
-        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
+        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "", "")
 
     @patch("pydict.network_manager.requests.get")
     def test_invalid_request_500(self, get_mock):
         """Tests that the program handles when a generic internal error occurs"""
         get_mock.return_value.status_code = 500
-        self.assertRaises(Exception, NetworkManager.make_request, self, "", "", "")
+        self.assertRaises(Exception, NetworkManager.make_request, self, "", "", "", "")
 
     @patch("pydict.network_manager.requests.get")
     def test_valid_request(self, get_mock):
@@ -74,14 +74,14 @@ class TestNetworkManager(unittest.TestCase):
         get_mock.return_value.status_code = 200
         get_mock.return_value.text = "example_request"
         
-        expect(NetworkManager.make_request(self, "", "", "")).to(be("example_request"))
+        expect(NetworkManager.make_request(self, "", "", "", "")).to(be("example_request"))
 
     @patch("pydict.network_manager.requests.get")
     def test_valid_request_endpoint(self, get_mock):
         """Tests that the request goes to a valid endpoint"""
         get_mock.return_value.status_code = 200
 
-        NetworkManager.make_request(self, "API_KEY", "x", "y")
+        NetworkManager.make_request(self, "API_KEY", "APP_ID", "x", "y")
         expect(get_mock.call_args_list[0][0]).to(contain(str.format(pydict.core.API_URL, word="x")))
 
 
