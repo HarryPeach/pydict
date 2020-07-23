@@ -3,7 +3,7 @@ import importlib.resources
 import os
 import argparse
 from unittest.mock import patch
-from expects import be_a, be_above, equal, expect, be, have_properties
+from expects import be_a, be_above, equal, expect, be, have_properties, contain
 
 import pydict
 import pydict.core
@@ -76,12 +76,27 @@ class TestNetworkManager(unittest.TestCase):
         
         expect(NetworkManager.make_request(self, "", "", "")).to(be("example_request"))
 
+    @patch("pydict.network_manager.requests.get")
+    def test_valid_request_endpoint(self, get_mock):
+        """Tests that the request goes to a valid endpoint"""
+        get_mock.return_value.status_code = 200
+
+        NetworkManager.make_request(self, "API_KEY", "x", "y")
+        expect(get_mock.call_args_list[0][0]).to(contain(str.format(pydict.core.API_URL, word="x")))
+
+
 class TestMain(unittest.TestCase):
     """Tests the main class"""
+
     @patch.dict(os.environ, {pydict.core.API_KEY_STRING: "example_set_string"})
     def test_api_string_provided_through_env(self):
         """Tests that the method will succeed if the key is provided through environment variables"""
         expect(pydict.core.is_api_key_provided([])).to(be(True))
+
+    @patch.dict(os.environ, {pydict.core.APP_ID_STRING: "example_set_string"})
+    def test_app_id_string_provided_through_env(self):
+        """Tests that the method will succeed if the key is provided through environment variables"""
+        expect(pydict.core.is_app_id_provided([])).to(be(True))
 
     def test_api_string_none_provided(self):
         """Tests that the method will fail when the api is not provided in any valid form"""
@@ -97,6 +112,20 @@ class TestMain(unittest.TestCase):
 
         expect(pydict.core.is_api_key_provided(args)).to(be(False))
 
+    def test_app_id_string_none_provided(self):
+        """Tests that the method will fail when the api is not provided in any valid form"""
+
+        # Set up parser and arguments
+        parser = argparse.ArgumentParser(description="test parser")
+        parser.add_argument("--app-id")
+        args = parser.parse_args()
+
+        # Scrub the environment variable
+        os.environ[pydict.core.APP_ID_STRING] = ""
+        del os.environ[pydict.core.APP_ID_STRING]
+
+        expect(pydict.core.is_app_id_provided(args)).to(be(False))
+
     def test_api_string_provided_through_args(self):
         """Tests that the method will succeed if the key is passed through arguments"""
         # Set up parser and arguments
@@ -105,6 +134,15 @@ class TestMain(unittest.TestCase):
         args = parser.parse_args(["--api-key", "example_set_string"])
 
         expect(pydict.core.is_api_key_provided(args)).to(be(True))
+
+    def test_app_id_string_provided_through_args(self):
+        """Tests that the method will succeed if the key is passed through arguments"""
+        # Set up parser and arguments
+        parser = argparse.ArgumentParser(description="test parser")
+        parser.add_argument("--app-id")
+        args = parser.parse_args(["--app-id", "example_set_string"])
+
+        expect(pydict.core.is_app_id_provided(args)).to(be(True))
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

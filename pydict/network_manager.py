@@ -1,9 +1,10 @@
 import json
 import requests
+import pydict.core
 from pydict.word import Word
 
 class NetworkManager:
-    def make_request(self, api_key, word, options):
+    def make_request(self, api_key, app_id, word, options):
         """Makes a request and returns the json response
 
         Args:
@@ -17,7 +18,7 @@ class NetworkManager:
             Exception: If the server encounters an internal error (500)
             Exception: A general catch-all exception
         """
-        res = requests.get("https://od-api.oxforddictionaries.com:443/api/v2/entries/")
+        res = requests.get(str.format(pydict.core.API_URL, word=word), headers= {"app_id": app_id, "app_key": api_key})
 
         if res.status_code == 200:
             return res.text
