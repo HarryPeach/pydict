@@ -45,7 +45,7 @@ def main():
     try:
         json = NETWORK_MANAGER.make_request(API_KEY, APP_ID, ARGS.query, "")
         words = NETWORK_MANAGER.words_from_json(json)
-        print(words)
+        print(words[0].definition)
     except Exception as e:
         print(e)
         exit(1)
