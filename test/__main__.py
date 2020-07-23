@@ -16,10 +16,9 @@ class TestWord(unittest.TestCase):
 
     def test_word_attributes(self):
         """Tests that the word class can successfully get a word from json response"""
-        example_word = Word("word", "definition", "shortDefinition")
+        example_word = Word("word", "definition")
         expect(example_word.word).to(equal("word"))
         expect(example_word.definition).to(equal("definition"))
-        expect(example_word.short_definition).to(equal("shortDefinition"))
 
 class TestNetworkManager(unittest.TestCase):
     """Tests the NetworkManager class"""
@@ -48,7 +47,7 @@ class TestNetworkManager(unittest.TestCase):
         words = NetworkManager.words_from_json(self, self.sample_json)
 
         for word in words:
-            expect(word).to(have_properties("word", "definition", "short_definition"))
+            expect(word).to(have_properties("word", "definition"))
 
     @patch("pydict.network_manager.requests.get")
     def test_invalid_request_404(self, get_mock):
