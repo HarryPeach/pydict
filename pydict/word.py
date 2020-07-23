@@ -1,8 +1,8 @@
 class Word:
-    def __init__(self, word, definition, shortDefinition):
+    def __init__(self, word, definition, short_definition):
         self.word = word
         self.definition = definition
-        self.shortDefinition = shortDefinition
+        self.short_definition = short_definition
         
 
         

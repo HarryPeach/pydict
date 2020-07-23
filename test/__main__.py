@@ -8,12 +8,6 @@ from pydict.word import Word
 from pydict.network_manager import NetworkManager
 import test.resources as x
 
-class Test(unittest.TestCase):
-    @patch("pydict.requests.get")
-    def test_testable(self, get_mock):
-        get_mock.return_value.status_code = 200
-        expect(pydict.testable()).to(equal(200))
-
 class TestWord(unittest.TestCase):
     """Tests the word class"""
 
@@ -22,7 +16,7 @@ class TestWord(unittest.TestCase):
         example_word = Word("word", "definition", "shortDefinition")
         expect(example_word.word).to(equal("word"))
         expect(example_word.definition).to(equal("definition"))
-        expect(example_word.shortDefinition).to(equal("shortDefinition"))
+        expect(example_word.short_definition).to(equal("shortDefinition"))
 
 class TestNetworkManager(unittest.TestCase):
     """Tests the NetworkManager class"""
@@ -37,6 +31,27 @@ class TestNetworkManager(unittest.TestCase):
     def test_malformed_json(self):
         """Test that the word initializer will safely fail when the JSON is malformed"""
         self.assertRaises(ValueError, NetworkManager.words_from_json, self, "[}")
+
+    def test_word_list(self):
+        """Tests that the json decoder returns a list of words"""
+        words = NetworkManager.words_from_json(self, self.sample_json)
+
+        expect(len(words)).to(be_above(0))
+        for word in words:
+            expect(word).to(be_a(Word))
+
+    def test_word_list_validity(self):
+        """Tests the the words returned from the json decoder are valid"""
+        words = NetworkManager.words_from_json(self, self.sample_json)
+
+        for word in words:
+            expect(word).to(have_properties("word", "definition", "short_definition"))
+
+    @patch("pydict.requests.get")
+    def test_invalid_request_404(self, get_mock):
+        """Tests that the program handles when an entry was not found"""
+        get_mock.return_value.status_code = 404
+        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
 
     
 
