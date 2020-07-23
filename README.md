@@ -1,3 +1,4 @@
+![Python application](https://github.com/HarryPeach/pydict/workflows/Python%20application/badge.svg)
 # pydict
 ## A simple commandline dictionary program
 
