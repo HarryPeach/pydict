@@ -19,9 +19,16 @@ def main():
         print("You haven't provided an API key, please see the README for more info.")
         exit()
 
+    # Set the API_KEY from given source
+    API_KEY = ""
+    if ARGS.api_key != None:
+        API_KEY = ARGS.api_key
+    else:
+        API_KEY = os.getenv(API_KEY_STRING)
+
     json = ""
     try:
-        json = NETWORK_MANAGER.make_request("", "", "")
+        json = NETWORK_MANAGER.make_request(API_KEY, "", "")
     except Exception as e:
         print(e)
         exit(1)
