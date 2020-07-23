@@ -1,7 +1,7 @@
 import unittest
 import importlib.resources
 from unittest.mock import patch
-from expects import *
+from expects import be_a, be_above, equal, expect, be, have_properties
 
 import pydict
 from pydict.word import Word
@@ -53,8 +53,25 @@ class TestNetworkManager(unittest.TestCase):
         get_mock.return_value.status_code = 404
         self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
 
-    
+    @patch("pydict.requests.get")
+    def test_invalid_request_414(self, get_mock):
+        """Tests that the program handles when a request url is too long"""
+        get_mock.return_value.status_code = 414
+        self.assertRaises(ValueError, NetworkManager.make_request, self, "", "", "")
 
+    @patch("pydict.requests.get")
+    def test_invalid_request_500(self, get_mock):
+        """Tests that the program handles when a generic internal error occurs"""
+        get_mock.return_value.status_code = 500
+        self.assertRaises(Exception, NetworkManager.make_request, self, "", "", "")
+
+    @patch("pydict.requests.get")
+    def test_valid_request(self, get_mock):
+        """Tests that the program handles a successful request correctly"""
+        get_mock.return_value.status_code = 200
+        get_mock.return_value.text = "example_request"
+        
+        expect(NetworkManager.make_request(self, "", "", "")).to(be("example_request"))
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

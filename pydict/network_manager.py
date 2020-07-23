@@ -10,13 +10,25 @@ class NetworkManager:
             api_key (string): The Oxford Dictionaries API key
             word (string): The word to search for
             options (TODO): The options for the search
+
+        Raises:
+            ValueError: If the word is not found on the server (404)
+            ValueError: If the request URL is too long (414)
+            Exception: If the server encounters an internal error (500)
+            Exception: A general catch-all exception
         """
         res = requests.get("https://od-api.oxforddictionaries.com:443/api/v2/entries/")
 
         if res.status_code == 200:
-            pass
+            return res.text
         elif res.status_code == 404:
-            raise ValueError("There was no word found matching the given criteria.")
+            raise ValueError("There was no word found matching the given criteria: ")
+        elif res.status_code == 414:
+            raise ValueError("The request URL was too long.")
+        elif res.status_code == 500:
+            raise Exception("The API server returned an internal error.")
+        else:
+            raise Exception("An unspecified exception occurred.")
 
 
     def words_from_json(self, json_input):
