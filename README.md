@@ -22,10 +22,26 @@ Find the definition of the word "ace":
 ```sh
 python3 -m pydict ace
 ```
+```
+a playing card with a single spot on it, ranked as the highest card in its suit in most card games
+```
 
 Find the definition of the word "assist" through piped input (Unix mode):
 ```sh
 echo assist | python3 -m pydict -x
+```
+```
+help (someone), typically by doing a share of the work
+```
+
+Find all definitions of the word "aid" as well as full definition data:
+```sh
+python3 -m pydict aid -a -v
+```
+```
+aid • /eɪd/
+help, typically of a practical nature
+a grant of subsidy or tax to a king or queen.
 ```
 
 ### Testing
