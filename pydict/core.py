@@ -2,6 +2,7 @@ import argparse
 import requests
 import os
 import sys
+from colorama import Fore, init
 
 from pydict.network_manager import NetworkManager
 
@@ -10,6 +11,7 @@ APP_ID_STRING = "PYDICT_APP_ID"
 API_URL = "https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/{word}?fields=definitions,pronunciations"
 
 def main():
+    init()
     unix_mode = False
     unix_args = ""
 
@@ -64,26 +66,22 @@ def main():
             json = NETWORK_MANAGER.make_request(API_KEY, APP_ID, ARGS.query, "")
         words = NETWORK_MANAGER.words_from_json(json)
         
+        if (ARGS.verbose):
+                print(f"{Fore.YELLOW}{words[0].word}{Fore.RESET} • /{words[0].pronunciation}/")
+
         if ARGS.all:
             for x in range(len(words)):
+                print(f"    {Fore.GREEN}{x+1}.{Fore.RESET}", end=" ")
                 if x == 0:
-                    print_definition(words[x], ARGS.verbose)
+                    print(""+words[x].definition)
                 else:
-                    print_definition(words[x])
+                    print(words[x].definition)
         else:
-            print_definition(words[0], ARGS.verbose)
+            print(words[0].definition)
 
     except Exception as e:
         print(e)
         exit(1)
-
-def print_definition(word, verbose=False):
-    """Prints the definition in a formatted way"""
-    if verbose:
-        print(f"{word.word} • /{word.pronunciation}/")
-        print(word.definition)
-    else:
-        print(word.definition)
 
 def is_api_key_provided(args):
     """Checks if the API key is provided in any valid form
