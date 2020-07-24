@@ -7,7 +7,7 @@ from pydict.network_manager import NetworkManager
 
 API_KEY_STRING = "PYDICT_API_KEY"
 APP_ID_STRING = "PYDICT_APP_ID"
-API_URL = "https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/{word}?fields=definitions"
+API_URL = "https://od-api.oxforddictionaries.com:443/api/v2/entries/en-gb/{word}?fields=definitions,pronunciations"
 
 def main():
     unix_mode = False
@@ -18,6 +18,9 @@ def main():
     parser.add_argument("query", nargs="?", type=str, help="the search query")
     parser.add_argument("--app-id", type=str, help="the app ID to access the dictionaries API")
     parser.add_argument("--api-key", type=str, help="the API key to access the dictionaries API")
+    parser.add_argument("-a", "--all", type=bool, nargs="?", const=True, default=False, help="prints all available information")
+
+
 
     ARGS = parser.parse_args()
     NETWORK_MANAGER = NetworkManager()
@@ -61,10 +64,19 @@ def main():
         else:
             json = NETWORK_MANAGER.make_request(API_KEY, APP_ID, ARGS.query, "")
         words = NETWORK_MANAGER.words_from_json(json)
-        print(words[0].definition)
+        print_definition(words[0], ARGS)
+
     except Exception as e:
         print(e)
         exit(1)
+
+def print_definition(word, args):
+    """Prints the definition in a formatted way"""
+    if args.all:
+        print(f"{word.word} • /{word.pronunciation}/")
+        print(word.definition)
+    else:
+        print(word.definition)
 
 def is_api_key_provided(args):
     """Checks if the API key is provided in any valid form
