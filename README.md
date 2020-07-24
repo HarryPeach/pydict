@@ -8,7 +8,7 @@
 3. Run pydict using ```python3 -m pydict```
 
 
-> IMPORTANT: If you don't provided api key and app id information throught arguments you must set the following environment variables:
+> IMPORTANT: If you don't provide api key and app id information throught arguments you must set the following environment variables:
    1. ```PYDICT_API_KEY``` (Your Oxford Dictionaries API Key)
    2. ```PYDICT_APP_ID``` (Your Oxford Dictionaries App ID)
 
