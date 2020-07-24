@@ -50,7 +50,7 @@ class NetworkManager:
 
         try:
             for result in json_parsed["results"][0]["lexicalEntries"][0]["entries"][0]["senses"]:
-                words.append(Word(json_parsed["id"], result["definitions"][0]))
+                words.append(Word(json_parsed["id"], result["definitions"][0], json_parsed["results"][0]["lexicalEntries"][0]["entries"][0]["pronunciations"][0]["phoneticSpelling"]))
 
             return words
         except KeyError as e:

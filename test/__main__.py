@@ -3,7 +3,7 @@ import importlib.resources
 import os
 import argparse
 from unittest.mock import patch
-from expects import be_a, be_above, equal, expect, be, have_properties, contain
+from expects import be_a, be_above, equal, expect, be, have_properties, contain, be_empty
 
 import pydict
 import pydict.core
@@ -19,6 +19,7 @@ class TestWord(unittest.TestCase):
         example_word = Word("word", "definition")
         expect(example_word.word).to(equal("word"))
         expect(example_word.definition).to(equal("definition"))
+        expect(example_word.pronunciation).to(equal(""))
 
 class TestNetworkManager(unittest.TestCase):
     """Tests the NetworkManager class"""
@@ -47,7 +48,10 @@ class TestNetworkManager(unittest.TestCase):
         words = NetworkManager.words_from_json(self, self.sample_json)
 
         for word in words:
-            expect(word).to(have_properties("word", "definition"))
+            expect(word).to(have_properties("word", "definition", "pronunciation"))
+            expect(word.word).to_not(be_empty)
+            expect(word.definition).to_not(be_empty)
+            expect(word.pronunciation).to_not(be_empty)
 
     @patch("pydict.network_manager.requests.get")
     def test_invalid_request_404(self, get_mock):
