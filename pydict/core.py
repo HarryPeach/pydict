@@ -20,8 +20,6 @@ def main():
     parser.add_argument("--api-key", type=str, help="the API key to access the dictionaries API")
     parser.add_argument("-a", "--all", type=bool, nargs="?", const=True, default=False, help="prints all available information")
 
-
-
     ARGS = parser.parse_args()
     NETWORK_MANAGER = NetworkManager()
     

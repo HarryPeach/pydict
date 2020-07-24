@@ -7,6 +7,10 @@
 2. Run ```pip install -r requirements.txt```
 3. Run pydict using ```python3 -m pydict```
 
+Alternatively:
+1. Install python3 and pip
+2. Run ```python3 -m pip install .``` in the source directory
+3. Run pydict using ```python3 -m pydict```
 
 > IMPORTANT: If you don't provide api key and app id information throught arguments you must set the following environment variables:
    1. ```PYDICT_API_KEY``` (Your Oxford Dictionaries API Key)
