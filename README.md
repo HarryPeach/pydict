@@ -1,6 +1,8 @@
 ![Python application](https://github.com/HarryPeach/pydict/workflows/Python%20application/badge.svg)
+
 # pydict
 ## A simple commandline dictionary program
+![cover](https://user-images.githubusercontent.com/4750998/88436901-35210d80-cdfd-11ea-83de-2e49886de4af.png)
 
 ### Setup
 1. Install python3 and pip
