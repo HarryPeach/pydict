@@ -18,7 +18,8 @@ def main():
     parser.add_argument("query", nargs="?", type=str, help="the search query")
     parser.add_argument("--app-id", type=str, help="the app ID to access the dictionaries API")
     parser.add_argument("--api-key", type=str, help="the API key to access the dictionaries API")
-    parser.add_argument("-a", "--all", type=bool, nargs="?", const=True, default=False, help="prints all available information")
+    parser.add_argument("-v", "--verbose", type=bool, nargs="?", const=True, default=False, help="prints all available information about the word")
+    parser.add_argument("-a", "--all", type=bool, nargs="?", const=True, default=False, help="prints all available definitions matching the query")
 
     ARGS = parser.parse_args()
     NETWORK_MANAGER = NetworkManager()
@@ -62,15 +63,23 @@ def main():
         else:
             json = NETWORK_MANAGER.make_request(API_KEY, APP_ID, ARGS.query, "")
         words = NETWORK_MANAGER.words_from_json(json)
-        print_definition(words[0], ARGS)
+        
+        if ARGS.all:
+            for x in range(len(words)):
+                if x == 0:
+                    print_definition(words[x], ARGS.verbose)
+                else:
+                    print_definition(words[x])
+        else:
+            print_definition(words[0], ARGS.verbose)
 
     except Exception as e:
         print(e)
         exit(1)
 
-def print_definition(word, args):
+def print_definition(word, verbose=False):
     """Prints the definition in a formatted way"""
-    if args.all:
+    if verbose:
         print(f"{word.word} • /{word.pronunciation}/")
         print(word.definition)
     else:
